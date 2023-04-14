@@ -4,7 +4,7 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     if (
       file.fieldname === "product-photo" ||
-      file.fieldname === "gallary"
+      file.fieldname === "product-gallary"
     )
       cb(null, "api/public/product");
   },
@@ -15,11 +15,11 @@ const storage = multer.diskStorage({
 
 export const productMulter = multer({ storage }).fields([
   {
-    name: "photo",
+    name: "product-photo",
     maxCount: 1,
   },
   {
-    name: "gallary",
+    name: "product-gallary",
     maxCount: 10,
   },
 ]);

@@ -5,13 +5,15 @@
   "main": "./api/Server.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start" : "nodemon api/Server.js"
+    "Server": "nodemon api/Server.js",
+    "redux-shop": "npm start --prefix redux-shop",
+    "start": "concurrently \"npm run Server\" \"npm run redux-shop\""
   },
   "author": "nur amin",
   "license": "ISC",
   "dependencies": {
     "colors": "^1.4.0",
+    "concurrently": "^8.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",

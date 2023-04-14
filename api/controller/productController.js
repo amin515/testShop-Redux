@@ -1,7 +1,7 @@
 import { createSlug } from "../helper/createSlug.js";
 import Product from "../models/productModels.js";
 import createError from "../utility/customError/createError.js";
-
+import { unlinkSync } from "fs";
 /**
  * @status get
  * @ get all categories
@@ -41,15 +41,18 @@ export const getAllProduct = async (req, res, next) => {
 
 export const createProduct = async (req, res, next) => {
   try {
-    const { name, stock, short_desc, long_desc, regular_price, sale_price, photo } =
+    const { name, stock, short_desc, long_desc, regular_price, sale_price } =
       req.body;
 
-    // let gallery = [];
-    // for (let i = 0; i < req.files.gallery.length; i++) {
-    //   gallery.push(req.files.gallery[i].filename);
-    // }
-    const data = await Product.create({
+    // single photo convert to original image
+    const photo = req.files["product-photo"][0].filename;
+    const gallary = [];
 
+    [...req.files["product-gallary"]].forEach((item) => {
+      gallary.push(item.filename);
+    });
+
+    const data = await Product.create({
       name,
       stock,
       short_desc,
@@ -58,10 +61,9 @@ export const createProduct = async (req, res, next) => {
       sale_price,
       slug: createSlug(name),
       photo: photo,
-      // gallary: gallery,
+      gallary: gallary,
     });
 
-   
     res.status(200).json({
       product: data,
       message: "Product added successful",
@@ -101,15 +103,42 @@ export const getOneProduct = async (req, res, next) => {
 export const updateProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, slug, photo } = req.body;
+    const { name, stock, short_desc, long_desc, regular_price, sale_price } =
+      req.body;
 
-    const data = await Product.findByIdAndUpdate(
-      id,
-      { name, slug },
-      {
-        new: true,
-      }
-    );
+    // product photo update
+    const product = await Product.findById(id);
+    let photo = product.photo;
+    if (req.files["product-photo"]) {
+      photo = req.files["product-photo"][0].filename;
+      unlinkSync(`api/public/product/${product.photo}`);
+    }
+
+    // product update gallary
+    let old_gallary = product.gallary;
+    let new_gallary = [];
+    if (req.files["product-gallary"]) {
+     
+      req.files["product-gallary"].forEach(item => {
+        new_gallary.push(item.filename)
+      });
+
+    }
+
+    const final_gallary = old_gallary.concat(new_gallary)
+
+    const data = await product.updateOne({
+      name,
+      slug: createSlug(name),
+      photo,
+      gallary : final_gallary,
+      stock,
+      short_desc,
+      long_desc,
+      regular_price,
+      sale_price,
+    });
+
     res.status(200).json({
       product: data,
     });
@@ -128,11 +157,20 @@ export const updateProduct = async (req, res, next) => {
 export const updateMultipleProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, slug, photo } = req.body;
+    const { name, stock, short_desc, long_desc, regular_price, sale_price } =
+      req.body;
 
     const data = await Product.findByIdAndUpdate(
       id,
-      { name, slug },
+      {
+        name,
+        slug: createSlug(name),
+        stock,
+        short_desc,
+        long_desc,
+        regular_price,
+        sale_price,
+      },
       {
         new: true,
       }
@@ -149,7 +187,15 @@ export const deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const data = await Cat.findByIdAndDelete(id);
+    const data = await Product.findByIdAndDelete(id);
+
+    // delete related photo
+    unlinkSync(`api/public/product/${data.photo}`);
+
+    // delete related gallary photo
+    data.gallary.forEach((item) => {
+      unlinkSync(`api/public/product/${item}`);
+    });
     res.status(200).json({
       product: data,
       message: `${`successfuly delete ${data.name}`}`,
