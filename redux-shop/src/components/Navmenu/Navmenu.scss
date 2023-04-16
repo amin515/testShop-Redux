@@ -1,0 +1,17 @@
+.menu{
+    background-color: orangered;
+      ul{
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          margin-bottom: 0;
+          li{
+              padding: 10px 20px;
+              a{
+                  text-decoration: none;
+                  color: #fff;
+                  text-transform: uppercase;
+              }
+          }
+      }
+  }
