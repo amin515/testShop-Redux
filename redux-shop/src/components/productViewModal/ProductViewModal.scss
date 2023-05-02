@@ -1,0 +1,27 @@
+
+.product-quick-view{
+    display: flex;
+
+    .quick-view-img{
+        width: 80%;
+        img{
+            width: 100%;
+        }
+    }
+    .product-detailes{
+        .quick-pricing{
+            display: flex;
+            gap: 10px;
+    
+            .regular{
+                
+                text-decoration: line-through;
+                color: red;
+            }
+            .sale{
+                font-weight: 500;
+            }
+        }
+    }
+   
+}

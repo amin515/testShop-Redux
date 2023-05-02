@@ -1,6 +1,7 @@
 
 import { combineReducers } from 'redux';
-import shopReducers from '../Shop/shopReducer';
+import shopReducers from '../reduxAction/Shop/shopReducer';
+
 
 // create root reducers
 

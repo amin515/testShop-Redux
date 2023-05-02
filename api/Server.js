@@ -16,14 +16,16 @@ const app = express();
 // env configuration
 dotenv.config();
 
+// initial cors
+app.use(cors());
+ 
+
 // port declation
 const PORT = process.env.SERVER_PORT || 9090;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// initial cors
-app.use(cors());
 
 
 // error handler
@@ -32,12 +34,13 @@ app.use(errorHandler);
 // static folder
 app.use(express.static(path.join(__dirname, "api/public")));
 
+// app.use(express.static(path.join(__dirname, )'public'))
 
 
 // router get
-app.use('/api/v1/product', productRouter)
-app.use('/api/v1/product', catRouter, brandRouter, tagRouter)
 
+app.use('/api/v1/product', catRouter, brandRouter, tagRouter)
+app.use('/api/v1/product', productRouter)
 
 
 

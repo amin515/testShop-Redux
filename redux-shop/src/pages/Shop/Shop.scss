@@ -1,3 +1,100 @@
 
 
+.shop-page-wrapper{
+    display: flex;
+    flex-wrap: wrap;
+}
 
+
+// side bar
+
+.sidebar{
+    .sidebar-wrapper{
+     .search{
+        .search-item{
+            display: flex;
+            align-items: center;
+            input{
+                width: 80%;
+                border: 1px solid #ccc;
+                border-top-left-radius: 3px;
+                border-bottom-left-radius: 3px;
+                padding: 0 10px;
+                height: 40px;
+                &:focus{
+                    outline: none;
+                }
+            }
+            button{
+                height: 41px;
+                position: relative;
+                top: -0.5px;
+                width: 19%;
+                color: #fff;
+                border: none;
+                transform: translate(0px -2px);
+                border-top-right-radius: 2px;
+                border-bottom-right-radius: 2px;
+                font-size: 20px;
+                background-color: orangered;
+                i{
+                    padding: 0;
+                }
+            }
+        }
+     }
+     .category{
+        margin-top: 10px;
+        label{
+            padding: 0 12px;
+            
+        }
+     }
+     .tag{
+        label{
+            padding: 0 12px;
+           
+        }
+     }
+     .brand{
+        margin-top: 10px;
+        .brand-btn{
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            button{
+                border: none;
+                padding: 5px 10px;
+                background-color: orangered;
+                color: #fff;
+            }
+        }
+        
+     }
+     .price-ranger{
+        margin-top: 12px;
+        label {
+            display: flex;
+            gap: 5px;
+
+            input{
+                width: 32%;
+                padding: 0 0 0 5px;
+                border: 1px solid #ccc;
+                height: 40px;
+                &:focus{
+                    outline: none;
+                }
+            }
+            button{
+                border: none;
+                width: 32%;
+                font-size: 20px;
+                background-color: orangered;
+                color: #fff;
+            }
+        }
+     }
+    }
+}

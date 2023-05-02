@@ -29,6 +29,7 @@ export const getAllBrand = async (req, res, next) => {
   } catch (error) {
     console.log(next(error.message));
   }
+
 };
 
 /**@status post
@@ -143,3 +144,7 @@ export const deleteBrand = async (req, res, next) => {
     next(createError(400, "user not found"));
   }
 };
+
+/**
+ * update status
+ */

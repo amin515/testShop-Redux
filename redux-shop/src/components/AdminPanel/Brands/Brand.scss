@@ -1,0 +1,25 @@
+
+.admin-brands{
+    .admin-brands-page{
+        .admin-brands-wrapper{
+            display: flex;
+            justify-content: space-between;
+            .brands-title{
+              font-weight: 900;
+              
+            }
+            .brands-content{
+             button{
+                border: none;
+                padding: 8px 16px;
+                background-color: orangered;
+                color: #fff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 5px;
+             }
+            }
+        }
+    }
+}
