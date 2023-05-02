@@ -8,6 +8,7 @@ import {
   getOneBrand,
   updateBrand,
   updateMultipleBrand,
+  updateStatusBrand,
 
 } from "../controller/brandController.js";
 import { brandMulter } from "../middlewares/brandMulter.js";
@@ -22,6 +23,8 @@ router.put("/brands/:id", updateBrand);
 
 router.patch("/brands/:id", updateMultipleBrand);
 router.delete("/brands/:id", deleteBrand);
+router.put("/brands-status/:id", updateStatusBrand,
+);
 
 // export
 export default router;

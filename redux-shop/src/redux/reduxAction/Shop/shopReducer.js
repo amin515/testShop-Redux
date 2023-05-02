@@ -1,7 +1,6 @@
 // create shop reducers
 
 import {
-
   CREATE_BRANDS_FAILED,
   CREATE_BRANDS_REQUEST,
   CREATE_BRANDS_SUCCESS,
@@ -11,7 +10,8 @@ import {
   GET_BRANDS_FAILED,
   GET_BRANDS_REQUEST,
   GET_BRANDS_SUCCESS,
-  
+  UPDATE_BRAND_FAILED,
+  UPDATE_BRAND_SUCCESS,
 } from "../actionTypes.js";
 import initialState from "../initialState";
 
@@ -70,7 +70,20 @@ const shopReducers = (state = initialState, { type, payload }) => {
         loading: false,
         error: payload,
       };
-   
+
+    case UPDATE_BRAND_SUCCESS:
+      state.brands[state.brands.findIndex((data) => data._id === payload._id)] =
+        payload;
+      return {
+        ...state,
+        brands: state.brands,
+      };
+    case UPDATE_BRAND_FAILED:
+      
+      return {
+        ...state,
+        error : payload
+      };
 
     default:
       return state;

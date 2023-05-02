@@ -7,12 +7,16 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   createBrand,
   deleteBrand,
-
+  updateStatus,
 } from "../../../redux/reduxAction/action.js";
 import swal from "sweetalert";
 
 const Brands = () => {
-  const [brandModal, setBrandModal] = useState(false);
+  const [brandModal, setBrandModal] = useState({
+    show: false,
+    type: "create",
+    dataId: "",
+  });
   const [input, setInput] = useState("");
   const [logo, setLogo] = useState(null);
 
@@ -22,10 +26,13 @@ const Brands = () => {
   //declear redux function
   const dispatch = useDispatch();
 
-
   // handle show modal
   const handleShowModal = () => {
-    setBrandModal(true);
+    setBrandModal((prevState) => ({
+      ...prevState,
+      show: true,
+      type: "create",
+    }));
   };
 
   // upload image or logo
@@ -71,16 +78,27 @@ const Brands = () => {
     });
   };
 
- 
+  // handle status update
+
+  const handleStatusUpdate = (id, status) => {
+    dispatch(updateStatus({ id, status: !status }));
+  };
+
+  // handle edit brand
+  const handleeditBrand = () => {
+    setBrandModal((prevState) => ({...prevState, show : true, type : 'edit'}))
+  }
 
   return (
     <div className="admin-brands">
       <div className="admin-brands-page">
         <div className="admin-brands-wrapper">
           <AdminModal
-            show={brandModal}
-            onHide={() => setBrandModal(false)}
-            title="Create New Brand"
+            show={brandModal.show}
+            onHide={() => setBrandModal({ show: false })}
+            title={brandModal.type === 'create' ? 'Create new Brand' : 'Edit brands'}
+            type = {brandModal.type}
+            dataId
           >
             <Form onSubmit={handleSubmitForm}>
               <Form.Group className="mb-3">
@@ -153,11 +171,17 @@ const Brands = () => {
                         id="custom-switch"
                         label=""
                         checked={status}
+                        onChange={() => handleStatusUpdate(_id, status)}
                       />
                     </Form>
                   </td>
                   <td>
-                    <button className="btn btn-info btn-sm">
+                    <button
+                      className="btn btn-info btn-sm"
+                      onClick={() =>
+                      handleeditBrand(_id)
+                      }
+                    >
                       <i class="bx bxs-edit"></i>
                     </button>
                     &nbsp;
