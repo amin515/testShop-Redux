@@ -7,21 +7,38 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   createBrand,
   deleteBrand,
+  updateBrand,
   updateStatus,
 } from "../../../redux/reduxAction/action.js";
 import swal from "sweetalert";
 
+// show hide conditional modal edit & create
 const Brands = () => {
+
+
+   // get data from redux store
+   const { brands } = useSelector((state) => state.shop);
+
+   // create modal type
   const [brandModal, setBrandModal] = useState({
     show: false,
     type: "create",
-    dataId: "",
+    dataId: null,
   });
+
+  //when edit brand value
+  const [edit, setEdit] = useState({
+    name: "",
+    photo: "",
+  });
+
+console.log(edit.name, edit.photo)
+  // declear useState for
   const [input, setInput] = useState("");
   const [logo, setLogo] = useState(null);
+  const [editLogo, setEditLogo] = useState(null);
+ 
 
-  // get data from redux store
-  const { brands } = useSelector((state) => state.shop);
 
   //declear redux function
   const dispatch = useDispatch();
@@ -37,28 +54,14 @@ const Brands = () => {
 
   // upload image or logo
   const handleUploadLogo = (e) => {
-    setLogo(e.target.files[0]);
-  };
-
-  // handle submit form
-  const handleSubmitForm = async (e) => {
-    e.preventDefault();
-
-    // create from data
-    const form_data = new FormData();
-
-    form_data.append("name", input);
-    form_data.append("brand-photo", logo);
-
-    dispatch(
-      createBrand({ data: form_data, setBrandModal, setLogo, setInput })
-    );
-
-    e.target.reset();
+    if (brandModal.type === "create") {
+      setLogo(e.target.files[0]);
+    } else if (brandModal.type === "edit") {
+      setEditLogo(e.target.files[0]);
+    }
   };
 
   // handle delete brands
-
   const handleDeleteBrands = (id) => {
     swal({
       title: "Are you sure?",
@@ -79,33 +82,87 @@ const Brands = () => {
   };
 
   // handle status update
-
   const handleStatusUpdate = (id, status) => {
     dispatch(updateStatus({ id, status: !status }));
   };
 
-  // handle edit brand
-  const handleeditBrand = () => {
-    setBrandModal((prevState) => ({...prevState, show : true, type : 'edit'}))
-  }
+  // edit brand modal
 
+  // const [editBrands, setEditBrands] = useState(false);
+  // handle edit brand
+  const handleEditBrand = (id) => {
+    setBrandModal((prevState) => ({
+      ...prevState,
+      show: true,
+      type: "edit",
+      dataId: id,
+    }));
+  
+    const editData = brands.find((data) => data._id === id);
+    setEdit(editData);
+  };
+
+  // instant logo updater
+  const handleUpadteBrandLogo = () => {
+    setBrandModal({ show: false });
+    setEditLogo(null);
+  };
+
+  // handle submit form
+  const handleSubmitForm = (e) => {
+    e.preventDefault();
+
+    if (brandModal.type === "create") {
+      // create from data
+      const form_data = new FormData();
+
+      form_data.append("name", input);
+      form_data.append("brand-photo", logo);
+
+      dispatch(
+        createBrand({ data: form_data, setBrandModal, setLogo, setInput })
+      );
+    
+      e.target.reset();
+    } else if (brandModal.type === "edit") {
+      // edit brand photo data
+      dispatch(
+        updateBrand({
+          id: brandModal.dataId,
+          name: edit?.name,
+          photo: editLogo,
+        })
+      );
+      e.target.reset();
+    }
+  };
   return (
     <div className="admin-brands">
       <div className="admin-brands-page">
         <div className="admin-brands-wrapper">
           <AdminModal
             show={brandModal.show}
-            onHide={() => setBrandModal({ show: false })}
-            title={brandModal.type === 'create' ? 'Create new Brand' : 'Edit brands'}
-            type = {brandModal.type}
-            dataId
+            onHide={() => handleUpadteBrandLogo()}
+            title={
+              brandModal.type === "create" ? "Create new Brand" : "Edit brands"
+            }
+            type={brandModal.type}
+            dataId={brandModal.dataId}
           >
             <Form onSubmit={handleSubmitForm}>
               <Form.Group className="mb-3">
                 <Form.Label>Brand name</Form.Label>
                 <Form.Control
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
+                  value={brandModal.type === "create" ? input : edit.name}
+                  onChange={
+                    brandModal.type === "create"
+                      ? (e) => setInput(e.target.value)
+                      : (e) =>
+                          setEdit((prevState) => ({
+                            ...prevState,
+                            name: e.target.value,
+                          }))
+                  }
                   type="text"
                 />
               </Form.Group>
@@ -114,18 +171,54 @@ const Brands = () => {
                 <Form.Control onChange={handleUploadLogo} type="file" />
               </Form.Group>
               <hr />
-              {logo && (
-                <img
-                  style={{ maxWidth: "100%", marginBottom: "10px" }}
-                  src={URL.createObjectURL(logo)}
-                  alt=""
-                />
+              {brandModal.type === "create"
+                ? logo && (
+                    <img
+                      style={{
+                        width: "100%",
+                        marginBottom: "10px",
+                        height: "250px",
+                        objectFit: "contain",
+                      }}
+                      src={URL.createObjectURL(logo)}
+                      alt=""
+                    />
+                  )
+                : edit?.photo && (
+                    <img
+                      style={{
+                        width: "100%",
+                        marginBottom: "10px",
+                        height: "250px",
+                        objectFit: "contain",
+                      }}
+                      src={
+                        editLogo
+                          ? URL.createObjectURL(editLogo)
+                          : `http://localhost:5050/brand/${edit.photo}`
+                      }
+                      alt=""
+                    />
+                  )}
+              {brandModal.type === "create" ? (
+                <Button variant="primary" type="submit">
+                  Add brand
+                </Button>
+              ) : (
+                <Button variant="primary" type="submit">
+                  Edit Brand
+                </Button>
               )}
-              <Button variant="primary" type="submit">
-                Add brand
-              </Button>
             </Form>
           </AdminModal>
+          {/* <EditModal
+            show={editBrands}
+            onHide={setEditBrands}
+            edit={edit}
+            setEdit={setEdit}
+            logo={logo}
+            brandModal={brandModal}
+          /> */}
           <div className="brands-title">
             <h2>Brands</h2>
           </div>
@@ -178,9 +271,7 @@ const Brands = () => {
                   <td>
                     <button
                       className="btn btn-info btn-sm"
-                      onClick={() =>
-                      handleeditBrand(_id)
-                      }
+                      onClick={() => handleEditBrand(_id)}
                     >
                       <i class="bx bxs-edit"></i>
                     </button>

@@ -13,6 +13,8 @@ import {
   GET_BRANDS_SUCCESS,
   UPDATE_BRAND_FAILED,
   UPDATE_BRAND_SUCCESS,
+  UPDATE_STATUS_FAILED,
+  UPDATE_STATUS_SUCCESS,
 } from "./actionTypes.js";
 
 // get all brands
@@ -71,6 +73,7 @@ export const deleteBrand = (id) => async (dispatch) => {
   }
 };
 
+// update status
 export const updateStatus =
   ({ id, status }) =>
   async (dispatch) => {
@@ -80,7 +83,33 @@ export const updateStatus =
           status,
         })
         .then((res) => {
+          dispatch({ type: UPDATE_STATUS_SUCCESS, payload: res.data.brand });
+        })
+        .catch((err) => {
+          dispatch({ type: UPDATE_STATUS_FAILED, payload: err.message });
+        });
+    } catch (error) {
+      dispatch({ type: UPDATE_STATUS_FAILED, payload: error.message });
+    }
+  };
+
+// update brands
+
+export const updateBrand =
+  ({ id, name, photo, setBrandModal, setEdit }) =>
+  async (dispatch) => {
+    try {
+      await axios
+        .put(`http://localhost:5050/api/v1/product/brands/${id}`, {
+          id,
+          name,
+          photo
+        })
+        .then((res) => {
+          console.log(res.data)
           dispatch({ type: UPDATE_BRAND_SUCCESS, payload: res.data.brand });
+          setBrandModal({ show: false });
+          setEdit(null);
         })
         .catch((err) => {
           dispatch({ type: UPDATE_BRAND_FAILED, payload: err.message });

@@ -16,7 +16,8 @@ const AdminModal = ({children, show, onHide, title, type}) => {
       </Modal>
       </>
     )
-  }else if(type === 'edit'){
+  }
+  else if(type === 'edit'){
     return (
       <>
       <Modal show={show} onHide={onHide} centered>

@@ -29,7 +29,6 @@ export const getAllBrand = async (req, res, next) => {
   } catch (error) {
     console.log(next(error.message));
   }
-
 };
 
 /**@status post
@@ -88,11 +87,11 @@ export const getOneBrand = async (req, res, next) => {
 export const updateBrand = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, slug, photo } = req.body;
-
+    const { name, photo } = req.body;
+    console.log(photo);
     const data = await Brand.findByIdAndUpdate(
       id,
-      { name, slug },
+      { name, slug: createSlug(name)},
       {
         new: true,
       }
@@ -115,22 +114,33 @@ export const updateBrand = async (req, res, next) => {
 export const updateMultipleBrand = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, slug, photo } = req.body;
-    const data = await Brand.findByIdAndUpdate(
+    const { name, photo } = req.body;
+   
+    const brand = await Brand.findByIdAndUpdate(
       id,
-      { name, slug },
+      {
+        name,
+        slug: createSlug(name),
+        photo: req.file.filename ? req.file.filename : photo,
+      },
       {
         new: true,
       }
     );
     res.status(200).json({
-      brand: data,
+      brand,
     });
   } catch (error) {
     console.log(next(error.message));
   }
 };
 
+/**
+ * delete brand
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 export const deleteBrand = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -163,7 +173,7 @@ export const updateStatusBrand = async (req, res, next) => {
     );
     res.status(200).json({
       brand,
-      msg : 'Update brand status successful'
+      msg: "Update brand status successful",
     });
   } catch (error) {
     console.log(next(error.message));
